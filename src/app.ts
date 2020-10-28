@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import morgan from 'morgan';
 import fetch from 'node-fetch';
+import redis from 'redis';
 
 import { dataParser } from './data-parser';
 
@@ -11,9 +12,12 @@ import { dataParser } from './data-parser';
 const { config } = dotenv;
 config();
 
-// Initialize express
+// Initialize express.
 const app = express();
 const { urlencoded, json } = express;
+
+// Initialize redis client.
+const client = redis.createClient();
 
 // Use middlewares.
 app.use(cors({ credentials: true, origin: true }));
@@ -41,9 +45,16 @@ const scrapeData = async () => {
 // Server route.
 app.get('/data', async (_req, res) => {
   try {
-    const data = await scrapeData();
-
-    res.send(data);
+    client.get('data', async (_err, result) => {
+      let data;
+      if (result) {
+        data = result;
+      } else {
+        data = await scrapeData();
+        client.setex('data', 300, JSON.stringify(data));
+      }
+      res.send(data);
+    });
   } catch (e) {
     res.status(500).send(e.message);
   }
