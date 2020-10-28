@@ -5,7 +5,7 @@
       "name": "Launch",
       "type": "pwa-node",
       "request": "launch",
-      "args": ["${workspaceRoot}/src/test/test.ts"],
+      "args": ["${workspaceRoot}/src/app.ts"],
       "runtimeArgs": ["-r", "ts-node/register", "--exec", "node"],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "nodemon",

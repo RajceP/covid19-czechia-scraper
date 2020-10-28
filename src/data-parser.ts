@@ -33,17 +33,8 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     deceasedDaily: [] as Array<IDeceasedDaily>,
     sourceUrl: url,
   };
-  // const data: IData = {} as IData;
   const rawData: IRawData = {} as IRawData;
   const preData: IPreData = {} as IPreData;
-
-  // const infectedDailyPreData: { values: [IXYAxes] } = { values: [{ x: '', y: 0 }] };
-  // const testsDailyPreData: { values: [IXYAxes] } = { values: [{ x: '', y: 0 }] };
-  // const positivityRatioPreData: { values: [IXYAxes] }[] = [{ values: [{ x: '', y: 0 }] }];
-  // const hospitalizedDailyPreData: { values: [IXYAxes] }[] = [{ values: [{ x: '', y: 0 }] }];
-  // const activeDailyPreData: { values: [[string, number]] }[] = [{ values: [['', 0]] }];
-  // const healedDailyPreData: { body: [[string, number, number]] } = { body: [['', 0, 0]] };
-  // const deceasedDailyPreData: { body: [[string, number, number]] } = { body: [['', 0, 0]] };
 
   const getRawData = () => {
     rawData.testsTotal = $('#count-test')?.attr('data-value');
