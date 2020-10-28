@@ -12,13 +12,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/cheerio": "^0.22.22",
-    "@types/cors": "^2.8.8",
-    "@types/express": "^4.17.8",
-    "@types/morgan": "^1.9.1",
-    "@types/node": "^14.14.5",
-    "@types/node-fetch": "^2.5.7",
-    "@types/redis": "^2.8.28",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "eslint": "^7.12.1",
@@ -26,10 +19,16 @@
     "eslint-config-typescript": "^3.0.0",
     "eslint-plugin-prettier": "^3.1.4",
     "nodemon": "^2.0.6",
-    "prettier": "^2.1.2",
-    "ts-node": "^9.0.0"
+    "prettier": "^2.1.2"
   },
   "dependencies": {
+    "@types/cheerio": "^0.22.22",
+    "@types/cors": "^2.8.8",
+    "@types/express": "^4.17.8",
+    "@types/morgan": "^1.9.1",
+    "@types/node": "^14.14.5",
+    "@types/node-fetch": "^2.5.7",
+    "@types/redis": "^2.8.28",
     "apicache": "^1.5.2",
     "cheerio": "^0.22.0",
     "cors": "^2.8.5",
