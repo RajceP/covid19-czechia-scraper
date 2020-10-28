@@ -17,7 +17,7 @@ const app = express();
 const { urlencoded, json } = express;
 
 // Initialize redis client.
-const client = redis.createClient();
+const client = redis.createClient(process.env.REDIS_URL || 'redis://localhost:6379');
 
 // Use middlewares.
 app.use(cors({ credentials: true, origin: true }));
