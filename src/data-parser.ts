@@ -1,98 +1,16 @@
-interface IData {
-  testsTotal: number;
-  testsYesterday: number;
-  infectedTotal: number;
-  infectedYesterday: number;
-  infectedToday: number;
-  active: number;
-  healed: number;
-  deceased: number;
-  hospitalized: number;
-  critical: number;
-  infectedDaily: IInfectedDaily[];
-  testsDaily: ITestsDaily[];
-  positivityRatio: IPositivityRatio[];
-  hospitalizedDaily: IHospitalizedDaily[];
-  activeDaily: IActiveDaily[];
-  healedDaily: IDeceasedDaily[];
-  deceasedDaily: IDeceasedDaily[];
-  sourceUrl: string;
-}
-
-interface IRawData {
-  testsTotal: string | undefined;
-  testsYesterday: string | undefined;
-  infectedTotal: string | undefined;
-  infectedYesterday: string | undefined;
-  infectedToday: string | undefined;
-  active: string | undefined;
-  healed: string | undefined;
-  deceased: string | undefined;
-  hospitalized: string | undefined;
-  critical: string | undefined;
-  infectedDailyRawData: string | undefined;
-  testsDailyRawData: string | undefined;
-  positivityRatioRawData: string | undefined;
-  hospitalizedDailyRawData: string | undefined;
-  activeDailyRawData: string | undefined;
-  healedDailyRawData: string | undefined;
-  deceasedDailyRawData: string | undefined;
-}
-
-interface IPreData {
-  infectedDailyPreData: { values: [IXYAxes] };
-  testsDailyPreData: { values: [IXYAxes] };
-  positivityRatioPreData: { values: [IXYAxes] }[];
-  hospitalizedDailyPreData: { values: [IXYAxes] }[];
-  activeDailyPreData: { values: [[string, number]] }[];
-  healedDailyPreData: { body: [[string, number, number]] };
-  deceasedDailyPreData: { body: [[string, number, number]] };
-}
-
-interface IXYAxes {
-  x: string;
-  y: number;
-}
-interface IInfectedDaily {
-  date: string;
-  value: number;
-  total: number;
-}
-
-interface ITestsDaily {
-  date: string;
-  value: number;
-  total: number;
-}
-
-interface IPositivityRatio {
-  date: string;
-  value: number;
-}
-
-interface IHospitalizedDaily {
-  date: string;
-  hospitalized: number;
-  critical: number;
-  released: number;
-}
-
-interface IActiveDaily {
-  date: string;
-  value: number;
-}
-
-interface IHealedDaily {
-  date: string;
-  value: number;
-  total: number;
-}
-
-interface IDeceasedDaily {
-  date: string;
-  value: number;
-  total: number;
-}
+import {
+  IActiveDaily,
+  IData,
+  IDeceasedDaily,
+  IHealedDaily,
+  IHospitalizedDaily,
+  IInfectedDaily,
+  IPositivityRatio,
+  IPreData,
+  IRawData,
+  ITestsDaily,
+  IXYAxes,
+} from './types';
 
 export const dataParser = ($: cheerio.Root, url: string): IData => {
   const data: IData = {
