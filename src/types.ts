@@ -16,27 +16,29 @@ export interface IData {
   activeDaily: IActiveDaily[];
   healedDaily: IDeceasedDaily[];
   deceasedDaily: IDeceasedDaily[];
+  infectionRate: IInfectionRate[];
   sourceUrl: string;
 }
 
 export interface IRawData {
-  testsTotal: string | undefined;
-  testsYesterday: string | undefined;
-  infectedTotal: string | undefined;
-  infectedYesterday: string | undefined;
-  infectedToday: string | undefined;
-  active: string | undefined;
-  healed: string | undefined;
-  deceased: string | undefined;
-  hospitalized: string | undefined;
-  critical: string | undefined;
-  infectedDailyRawData: string | undefined;
-  testsDailyRawData: string | undefined;
-  positivityRatioRawData: string | undefined;
-  hospitalizedDailyRawData: string | undefined;
-  activeDailyRawData: string | undefined;
-  healedDailyRawData: string | undefined;
-  deceasedDailyRawData: string | undefined;
+  testsTotal?: string;
+  testsYesterday?: string;
+  infectedTotal?: string;
+  infectedYesterday?: string;
+  infectedToday?: string;
+  active?: string;
+  healed?: string;
+  deceased?: string;
+  hospitalized?: string;
+  critical?: string;
+  infectedDailyRawData?: string;
+  testsDailyRawData?: string;
+  positivityRatioRawData?: string;
+  hospitalizedDailyRawData?: string;
+  activeDailyRawData?: string;
+  healedDailyRawData?: string;
+  deceasedDailyRawData?: string;
+  infectionRateRawData?: string;
 }
 
 export interface IPreData {
@@ -47,6 +49,7 @@ export interface IPreData {
   activeDailyPreData: { values: [[string, number]] }[];
   healedDailyPreData: { body: [[string, number, number]] };
   deceasedDailyPreData: { body: [[string, number, number]] };
+  infectionRatePreData: { name: string; code: string; color: string; value: number }[];
 }
 
 export interface IXYAxes {
@@ -93,4 +96,9 @@ export interface IDeceasedDaily {
   date: string;
   value: number;
   total: number;
+}
+
+export interface IInfectionRate {
+  name: string;
+  value: number;
 }

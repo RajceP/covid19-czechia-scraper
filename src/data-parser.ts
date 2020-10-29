@@ -5,6 +5,7 @@ import {
   IHealedDaily,
   IHospitalizedDaily,
   IInfectedDaily,
+  IInfectionRate,
   IPositivityRatio,
   IPreData,
   IRawData,
@@ -31,6 +32,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     activeDaily: [] as Array<IActiveDaily>,
     healedDaily: [] as Array<IDeceasedDaily>,
     deceasedDaily: [] as Array<IDeceasedDaily>,
+    infectionRate: [] as Array<IInfectionRate>,
     sourceUrl: url,
   };
   const rawData: IRawData = {} as IRawData;
@@ -53,6 +55,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     rawData.activeDailyRawData = $('#js-sick-recovered-died-data')?.attr('data-stackedareachart');
     rawData.healedDailyRawData = $('#js-total-recovered-table-data')?.attr('data-table');
     rawData.deceasedDailyRawData = $('#js-total-died-table-data')?.attr('data-table');
+    rawData.infectionRateRawData = $('#js-relative-isin-regions-data')?.attr('data-map');
   };
 
   const getPreData = ({
@@ -63,18 +66,20 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     activeDailyRawData,
     healedDailyRawData,
     deceasedDailyRawData,
+    infectionRateRawData: infectedRateRawData,
   }: IRawData) => {
     preData.infectedDailyPreData = infectedDailyRawData ? JSON.parse(infectedDailyRawData) : {};
     preData.testsDailyPreData = testsDailyRawData ? JSON.parse(testsDailyRawData) : {};
     preData.positivityRatioPreData = positivityRatioRawData
       ? JSON.parse(positivityRatioRawData)
-      : {};
+      : [];
     preData.hospitalizedDailyPreData = hospitalizedDailyRawData
       ? JSON.parse(hospitalizedDailyRawData)
-      : {};
+      : [];
     preData.activeDailyPreData = activeDailyRawData ? JSON.parse(activeDailyRawData) : {};
     preData.healedDailyPreData = healedDailyRawData ? JSON.parse(healedDailyRawData) : {};
     preData.deceasedDailyPreData = deceasedDailyRawData ? JSON.parse(deceasedDailyRawData) : {};
+    preData.infectionRatePreData = infectedRateRawData ? JSON.parse(infectedRateRawData) : [];
   };
 
   const getGeneralData = ({
@@ -190,6 +195,18 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     });
   };
 
+  const getInfectionRate = (
+    rateData: { name: string; code: string; color: string; value: number }[],
+  ) => {
+    rateData.map((rate: { name: string; code: string; color: string; value: number }) => {
+      const rateItem = {} as IInfectionRate;
+      rateItem.name = rate.name;
+      rateItem.value = rate.value;
+
+      data.infectionRate.push(rateItem);
+    });
+  };
+
   getRawData();
   getPreData(rawData);
   getGeneralData(rawData);
@@ -204,8 +221,9 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   getActiveDaily(preData.activeDailyPreData[1].values);
   getHealedDaily(preData.healedDailyPreData.body);
   getDeceasedDaily(preData.deceasedDailyPreData.body);
+  getInfectionRate(preData.infectionRatePreData);
 
-  // TODO: Region data.
+  // TODO: Regions data.
 
   return data;
 };

@@ -7,6 +7,7 @@ import fetch from 'node-fetch';
 import redis from 'redis';
 
 import { dataParser } from './data-parser';
+import { IData } from './types';
 
 // Set environment variables from .env file.
 const { config } = dotenv;
@@ -27,12 +28,13 @@ app.use(urlencoded({ extended: true }));
 app.use(json());
 
 // Initialize server listening.
-app.listen(process.env.PORT || 3002, () => {
-  console.log('server listening on port 3002');
+const port = process.env.PORT || 3002;
+app.listen(port, () => {
+  console.log(`server listening on port ${port}`);
 });
 
 // Main method.
-const scrapeData = async () => {
+const scrapeData: () => Promise<IData> = async () => {
   const generalUrl = 'https://onemocneni-aktualne.mzcr.cz/covid-19';
   const hospitalizationUrl = 'https://onemocneni-aktualne.mzcr.cz/covid-19/prehled-hospitalizaci';
   let html = await fetch(generalUrl).then((x) => x.text());
