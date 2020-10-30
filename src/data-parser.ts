@@ -14,6 +14,7 @@ import {
   ITestsDaily,
   IXYAxes,
 } from './types';
+import { parseDate } from './utils';
 
 /**
  * Main data parser method.
@@ -146,7 +147,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     let infectedTotal = 0;
     infectedData.values.map((infected: IXYAxes) => {
       const infectedItem = {} as IInfectedDaily;
-      infectedItem.date = infected.x;
+      infectedItem.date = parseDate(infected.x, 'dd.mm.yyyy');
       infectedItem.value = infected.y;
       infectedItem.total = infected.y + infectedTotal;
 
@@ -164,7 +165,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     let testsTotal = 0;
     testsData.values.map((tests: IXYAxes) => {
       const testsItem = {} as ITestsDaily;
-      testsItem.date = tests.x;
+      testsItem.date = parseDate(tests.x, 'dd.mm.yyyy');
       testsItem.value = tests.y;
       testsItem.total = tests.y + testsTotal;
 
@@ -181,7 +182,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   const getPositivityRatio = (positivityData: { values: [IXYAxes] }[]) => {
     positivityData[0].values.map((positivity: IXYAxes) => {
       const positivityItem = {} as IPositivityRatio;
-      positivityItem.date = positivity.x;
+      positivityItem.date = parseDate(positivity.x, 'dd.mm.yyyy');
       positivityItem.value = positivity.y;
 
       data.positivityRatio.push(positivityItem);
@@ -209,6 +210,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
       hospitalizedItem.released = releasedData.values.find((released: IXYAxes) => {
         return released.x === hospitalizedItem.date;
       }).y;
+      hospitalizedItem.date = parseDate(hospitalizedItem.date, 'dd.mm.yyyy');
 
       data.hospitalizedDaily.push(hospitalizedItem);
       data.critical = data.hospitalizedDaily[data.hospitalizedDaily.length - 1].critical;
@@ -222,7 +224,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   const getActiveDaily = (activeData: [string, number][]) => {
     activeData.map((active: [string, number]) => {
       const activeItem = {} as IActiveDaily;
-      activeItem.date = active[0];
+      activeItem.date = parseDate(active[0], 'yyyy-mm-dd');
       activeItem.value = active[1];
 
       data.activeDaily.push(activeItem);
@@ -236,7 +238,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   const getHealedDaily = (healedData: [string, number, number][]) => {
     healedData.map((healed: [string, number, number]) => {
       const healedItem = {} as IHealedDaily;
-      healedItem.date = healed[0];
+      healedItem.date = parseDate(healed[0], 'dd.mm.yyyy');
       healedItem.value = healed[1];
       healedItem.total = healed[2];
 
@@ -250,7 +252,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   const getDeceasedDaily = (deceasedData: [string, number, number][]) => {
     deceasedData.map((deceased: [string, number, number]) => {
       const deceasedItem = {} as IDeceasedDaily;
-      deceasedItem.date = deceased[0];
+      deceasedItem.date = parseDate(deceased[0], 'dd.mm.yyyy');
       deceasedItem.value = deceased[1];
       deceasedItem.total = deceased[2];
 
