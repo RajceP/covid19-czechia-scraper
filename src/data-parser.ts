@@ -4,8 +4,10 @@ import {
   IDeceasedDaily,
   IHealedDaily,
   IHospitalizedDaily,
+  IInfectedByRegion,
   IInfectedDaily,
-  IInfectionRate,
+  IInfectionRateByDistrict,
+  IInfectionRateByRegion,
   IPositivityRatio,
   IPreData,
   IRawData,
@@ -13,6 +15,11 @@ import {
   IXYAxes,
 } from './types';
 
+/**
+ * Main data parser method.
+ * @param $ Cheerio input.
+ * @param url Data source url.
+ */
 export const dataParser = ($: cheerio.Root, url: string): IData => {
   const data: IData = {
     testsTotal: 0,
@@ -32,12 +39,17 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     activeDaily: [] as Array<IActiveDaily>,
     healedDaily: [] as Array<IDeceasedDaily>,
     deceasedDaily: [] as Array<IDeceasedDaily>,
-    infectionRate: [] as Array<IInfectionRate>,
+    infectedByRegion: [] as Array<IInfectedByRegion>,
+    infectionRateByRegion: [] as Array<IInfectionRateByRegion>,
+    infectionRateByDistrict: [] as Array<IInfectionRateByDistrict>,
     sourceUrl: url,
   };
   const rawData: IRawData = {} as IRawData;
   const preData: IPreData = {} as IPreData;
 
+  /**
+   * Method containing cheerio selectors. Prepares raw data.
+   */
   const getRawData = () => {
     rawData.testsTotal = $('#count-test')?.attr('data-value');
     rawData.testsYesterday = $('[data-value-tests-yesterday]')?.attr('data-value-tests-yesterday');
@@ -55,9 +67,17 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     rawData.activeDailyRawData = $('#js-sick-recovered-died-data')?.attr('data-stackedareachart');
     rawData.healedDailyRawData = $('#js-total-recovered-table-data')?.attr('data-table');
     rawData.deceasedDailyRawData = $('#js-total-died-table-data')?.attr('data-table');
-    rawData.infectionRateRawData = $('#js-relative-isin-regions-data')?.attr('data-map');
+    rawData.infectedByRegionRawData = $('#js-total-isin-regions-data')?.attr('data-barchart');
+    rawData.infectionRateByRegionRawData = $('#js-relative-isin-regions-data')?.attr('data-map');
+    rawData.infectionRateByDistrictRawData = $('#js-relative-isin-districts-last-week-data')?.attr(
+      'data-map',
+    );
   };
 
+  /**
+   * Method is use to parse raw data.
+   * @param param0 Deconstructed raw data.
+   */
   const getPreData = ({
     infectedDailyRawData,
     testsDailyRawData,
@@ -66,7 +86,9 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     activeDailyRawData,
     healedDailyRawData,
     deceasedDailyRawData,
-    infectionRateRawData: infectedRateRawData,
+    infectedByRegionRawData,
+    infectionRateByRegionRawData: infectionRateRawData,
+    infectionRateByDistrictRawData,
   }: IRawData) => {
     preData.infectedDailyPreData = infectedDailyRawData ? JSON.parse(infectedDailyRawData) : {};
     preData.testsDailyPreData = testsDailyRawData ? JSON.parse(testsDailyRawData) : {};
@@ -79,9 +101,21 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     preData.activeDailyPreData = activeDailyRawData ? JSON.parse(activeDailyRawData) : {};
     preData.healedDailyPreData = healedDailyRawData ? JSON.parse(healedDailyRawData) : {};
     preData.deceasedDailyPreData = deceasedDailyRawData ? JSON.parse(deceasedDailyRawData) : {};
-    preData.infectionRatePreData = infectedRateRawData ? JSON.parse(infectedRateRawData) : [];
+    preData.infectedByRegionPreData = infectedByRegionRawData
+      ? JSON.parse(infectedByRegionRawData)
+      : {};
+    preData.infectionRateByRegionPreData = infectionRateRawData
+      ? JSON.parse(infectionRateRawData)
+      : [];
+    preData.infectionRateByDistrictPreData = infectionRateByDistrictRawData
+      ? JSON.parse(infectionRateByDistrictRawData)
+      : [];
   };
 
+  /**
+   * Method preparing general pandemic data.
+   * @param param0 Deconstructed raw data.
+   */
   const getGeneralData = ({
     testsTotal,
     testsYesterday,
@@ -104,6 +138,10 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     data.hospitalized = hospitalized ? parseFloat(hospitalized) : 0;
   };
 
+  /**
+   * Method preparing daily infected people data.
+   * @param infectedData Pre infected data.
+   */
   const getInfectedDaily = (infectedData: { values: [IXYAxes] }) => {
     let infectedTotal = 0;
     infectedData.values.map((infected: IXYAxes) => {
@@ -118,6 +156,10 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     });
   };
 
+  /**
+   * Method preparing daily tests data.
+   * @param testsData Pre test data.
+   */
   const getTestsDaily = (testsData: { values: [IXYAxes] }) => {
     let testsTotal = 0;
     testsData.values.map((tests: IXYAxes) => {
@@ -132,6 +174,10 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     });
   };
 
+  /**
+   * Method preparing positivity rate data.
+   * @param positivityData Pre positivity data.
+   */
   const getPositivityRatio = (positivityData: { values: [IXYAxes] }[]) => {
     positivityData[0].values.map((positivity: IXYAxes) => {
       const positivityItem = {} as IPositivityRatio;
@@ -142,6 +188,12 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     });
   };
 
+  /**
+   * Nethod preparing hospitalization data.
+   * @param hospitalizedData Hospitalized pre data.
+   * @param criticalData Critical patiens pre data.
+   * @param releasedData Released partiens pre data.
+   */
   const getHospitalizedDaily = (
     hospitalizedData: { values: any[] },
     criticalData: { values: any[] },
@@ -163,6 +215,10 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     });
   };
 
+  /**
+   * Method preparing active infected data.
+   * @param activeData Active pre data.
+   */
   const getActiveDaily = (activeData: [string, number][]) => {
     activeData.map((active: [string, number]) => {
       const activeItem = {} as IActiveDaily;
@@ -173,6 +229,10 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     });
   };
 
+  /**
+   * Method preparing healed infected data.
+   * @param healedData Healed pre data.
+   */
   const getHealedDaily = (healedData: [string, number, number][]) => {
     healedData.map((healed: [string, number, number]) => {
       const healedItem = {} as IHealedDaily;
@@ -183,7 +243,10 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
       data.healedDaily.push(healedItem);
     });
   };
-
+  /**
+   * Method preparing deceased data.
+   * @param deceasedData Deceased pre data.
+   */
   const getDeceasedDaily = (deceasedData: [string, number, number][]) => {
     deceasedData.map((deceased: [string, number, number]) => {
       const deceasedItem = {} as IDeceasedDaily;
@@ -195,16 +258,47 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     });
   };
 
-  const getInfectionRate = (
-    rateData: { name: string; code: string; color: string; value: number }[],
-  ) => {
-    rateData.map((rate: { name: string; code: string; color: string; value: number }) => {
-      const rateItem = {} as IInfectionRate;
+  /**
+   * Method preparing total infected by region.
+   * @param regionData Region pre data.
+   */
+  const getInfectedByRegion = (regionData: { values: [IXYAxes] }) => {
+    regionData.values.map((region: IXYAxes) => {
+      const regionItem = {} as IInfectedByRegion;
+      regionItem.name = region.x;
+      regionItem.value = region.y;
+
+      data.infectedByRegion.push(regionItem);
+    });
+  };
+
+  /**
+   * Method preparing infection rate by region data.
+   * @param rateData Infection rate by region pre data.
+   */
+  const getInfectionRateByRegion = (rateData: { name: string; value: number }[]) => {
+    rateData.map((rate: { name: string; value: number }) => {
+      const rateItem = {} as IInfectionRateByRegion;
       rateItem.name = rate.name;
       rateItem.value = rate.value;
 
-      data.infectionRate.push(rateItem);
+      data.infectionRateByRegion.push(rateItem);
     });
+  };
+
+  /**
+   * Method preparing infection rate by district data.
+   * @param rateData Infection rate by district pre data.
+   */
+  const getInfectedRateByDistrict = (rateData: {
+    data: { [key: string]: { name: string; value: number } };
+  }) => {
+    for (const district in rateData.data) {
+      const rateItem = {} as IInfectionRateByDistrict;
+      rateItem.name = rateData.data[district].name;
+      rateItem.value = rateData.data[district].value;
+      data.infectionRateByDistrict.push(rateItem);
+    }
   };
 
   getRawData();
@@ -221,9 +315,9 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   getActiveDaily(preData.activeDailyPreData[1].values);
   getHealedDaily(preData.healedDailyPreData.body);
   getDeceasedDaily(preData.deceasedDailyPreData.body);
-  getInfectionRate(preData.infectionRatePreData);
-
-  // TODO: Regions data.
+  getInfectedByRegion(preData.infectedByRegionPreData);
+  getInfectionRateByRegion(preData.infectionRateByRegionPreData);
+  getInfectedRateByDistrict(preData.infectionRateByDistrictPreData);
 
   return data;
 };

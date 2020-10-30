@@ -16,7 +16,9 @@ export interface IData {
   activeDaily: IActiveDaily[];
   healedDaily: IDeceasedDaily[];
   deceasedDaily: IDeceasedDaily[];
-  infectionRate: IInfectionRate[];
+  infectedByRegion: IInfectedByRegion[];
+  infectionRateByRegion: IInfectionRateByRegion[];
+  infectionRateByDistrict: IInfectionRateByDistrict[];
   sourceUrl: string;
 }
 
@@ -38,7 +40,9 @@ export interface IRawData {
   activeDailyRawData?: string;
   healedDailyRawData?: string;
   deceasedDailyRawData?: string;
-  infectionRateRawData?: string;
+  infectedByRegionRawData?: string;
+  infectionRateByRegionRawData?: string;
+  infectionRateByDistrictRawData?: string;
 }
 
 export interface IPreData {
@@ -49,7 +53,9 @@ export interface IPreData {
   activeDailyPreData: { values: [[string, number]] }[];
   healedDailyPreData: { body: [[string, number, number]] };
   deceasedDailyPreData: { body: [[string, number, number]] };
-  infectionRatePreData: { name: string; code: string; color: string; value: number }[];
+  infectedByRegionPreData: { values: [IXYAxes] };
+  infectionRateByRegionPreData: { name: string; value: number }[];
+  infectionRateByDistrictPreData: { data: { [key: string]: { name: string; value: number } } };
 }
 
 export interface IXYAxes {
@@ -98,7 +104,16 @@ export interface IDeceasedDaily {
   total: number;
 }
 
-export interface IInfectionRate {
+export interface IInfectedByRegion {
+  name: string;
+  value: number;
+}
+export interface IInfectionRateByRegion {
+  name: string;
+  value: number;
+}
+
+export interface IInfectionRateByDistrict {
   name: string;
   value: number;
 }

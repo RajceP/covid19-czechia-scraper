@@ -9,7 +9,6 @@ import redis from 'redis';
 import { dataParser } from './data-parser';
 import { IData } from './types';
 
-// Set environment variables from .env file.
 const { config } = dotenv;
 config();
 
