@@ -35,9 +35,7 @@ app.listen(port, () => {
 // Main method.
 const scrapeData: () => Promise<IData> = async () => {
   const generalUrl = 'https://onemocneni-aktualne.mzcr.cz/covid-19';
-  const hospitalizationUrl = 'https://onemocneni-aktualne.mzcr.cz/covid-19/prehled-hospitalizaci';
-  let html = await fetch(generalUrl).then((x) => x.text());
-  html += await fetch(hospitalizationUrl).then((x) => x.text());
+  const html = await fetch(generalUrl).then((x) => x.text());
   const $ = cheerio.load(html);
 
   return dataParser($, generalUrl);
