@@ -43,9 +43,10 @@ const scrapeData: () => Promise<IData> = async () => {
 
 // Server route.
 app.get('/data', async (_req, res) => {
-  try {
-    client.get('data', async (_err, result) => {
+  client.get('data', async (_err, result) => {
+    try {
       let data;
+
       if (result) {
         data = result;
       } else {
@@ -53,8 +54,8 @@ app.get('/data', async (_req, res) => {
         client.setex('data', 300, JSON.stringify(data));
       }
       res.send(data);
-    });
-  } catch (e) {
-    res.status(500).send(e.message);
-  }
+    } catch (e) {
+      res.status(500).send(e.message);
+    }
+  });
 });
