@@ -54,7 +54,7 @@ export interface IPreData {
   healedDailyPreData: { body: [[string, number, number]] };
   deceasedDailyPreData: { body: [[string, number, number]] };
   infectedByRegionPreData: { values: [IXYAxes] };
-  infectionRateByRegionPreData: { name: string; value: number }[];
+  infectionRateByRegionPreData: { name: string; relativeValue: number }[];
   infectionRateByDistrictPreData: { data: { [key: string]: { name: string; value: number } } };
 }
 

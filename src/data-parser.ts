@@ -278,11 +278,11 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
    * Method preparing infection rate by region data.
    * @param rateData Infection rate by region pre data.
    */
-  const getInfectionRateByRegion = (rateData: { name: string; value: number }[]) => {
-    rateData.map((rate: { name: string; value: number }) => {
+  const getInfectionRateByRegion = (rateData: { name: string; relativeValue: number }[]) => {
+    rateData.map((rate: { name: string; relativeValue: number }) => {
       const rateItem = {} as IInfectionRateByRegion;
       rateItem.name = rate.name;
-      rateItem.value = rate.value;
+      rateItem.value = rate.relativeValue;
 
       data.infectionRateByRegion.push(rateItem);
     });
@@ -292,7 +292,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
    * Method preparing infection rate by district data.
    * @param rateData Infection rate by district pre data.
    */
-  const getInfectedRateByDistrict = (rateData: {
+  const getInfectionRateByDistrict = (rateData: {
     data: { [key: string]: { name: string; value: number } };
   }) => {
     for (const district in rateData.data) {
@@ -319,7 +319,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   getDeceasedDaily(preData.deceasedDailyPreData.body);
   getInfectedByRegion(preData.infectedByRegionPreData);
   getInfectionRateByRegion(preData.infectionRateByRegionPreData);
-  getInfectedRateByDistrict(preData.infectionRateByDistrictPreData);
+  getInfectionRateByDistrict(preData.infectionRateByDistrictPreData);
 
   return data;
 };
