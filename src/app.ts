@@ -5,7 +5,6 @@ import express from 'express';
 import morgan from 'morgan';
 import fetch from 'node-fetch';
 import redis from 'redis';
-
 import { dataParser } from './data-parser';
 import { IData } from './types';
 
@@ -19,9 +18,12 @@ const { urlencoded, json } = express;
 // Initialize redis client.
 const client = redis.createClient(process.env.REDIS_URL || 'redis://localhost:6379');
 
+// initialize cors
+const useCors = cors();
+app.options('*', useCors);
+
 // Use middlewares.
 app.use(cors({ credentials: true, origin: true }));
-app.options('*', cors());
 app.use(morgan('dev'));
 app.use(urlencoded({ extended: true }));
 app.use(json());

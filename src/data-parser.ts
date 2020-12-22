@@ -27,7 +27,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     testsYesterday: 0,
     infectedTotal: 0,
     infectedYesterday: 0,
-    infectedToday: 0,
+    // infectedToday: 0,
     active: 0,
     healed: 0,
     deceased: 0,
@@ -35,6 +35,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     critical: 0,
     infectedDaily: [] as Array<IInfectedDaily>,
     testsDaily: [] as Array<ITestsDaily>,
+    testsDailyCorrected: [] as Array<ITestsDaily>,
     positivityRatio: [] as Array<IPositivityRatio>,
     hospitalizedDaily: [] as Array<IHospitalizedDaily>,
     activeDaily: [] as Array<IActiveDaily>,
@@ -56,7 +57,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     rawData.testsYesterday = $('[data-value-tests-yesterday]')?.attr('data-value-tests-yesterday');
     rawData.infectedTotal = $('#count-sick')?.attr('data-value');
     rawData.infectedYesterday = $('[data-value-sick-yesterday]')?.attr('data-value-sick-yesterday');
-    rawData.infectedToday = $('[data-value-sick-today]')?.attr('data-value-sick-today');
+    // rawData.infectedToday = $('[data-value-sick-today]')?.attr('data-value-sick-today');
     rawData.active = $('#count-active')?.attr('data-value');
     rawData.healed = $('#count-recover')?.attr('data-value');
     rawData.deceased = $('#count-dead')?.attr('data-value');
@@ -122,7 +123,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     testsYesterday,
     infectedTotal,
     infectedYesterday,
-    infectedToday,
+    // infectedToday,
     active,
     healed,
     deceased,
@@ -132,7 +133,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     data.testsYesterday = testsYesterday ? parseFloat(testsYesterday) : 0;
     data.infectedTotal = infectedTotal ? parseFloat(infectedTotal) : 0;
     data.infectedYesterday = infectedYesterday ? parseFloat(infectedYesterday) : 0;
-    data.infectedToday = infectedToday ? parseFloat(infectedToday) : 0;
+    // data.infectedToday = infectedToday ? parseFloat(infectedToday) : 0;
     data.active = active ? parseFloat(active) : 0;
     data.healed = healed ? parseFloat(healed) : 0;
     data.deceased = deceased ? parseFloat(deceased) : 0;
@@ -161,9 +162,9 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
    * Method preparing daily tests data.
    * @param testsData Pre test data.
    */
-  const getTestsDaily = (testsData: { values: [IXYAxes] }) => {
+  const getTestsDaily = (testsData: { values: [IXYAxes] }[]) => {
     let testsTotal = 0;
-    testsData.values.map((tests: IXYAxes) => {
+    testsData[0].values.map((tests: IXYAxes) => {
       const testsItem = {} as ITestsDaily;
       testsItem.date = parseDate(tests.x, 'dd.mm.yyyy');
       testsItem.value = tests.y;
@@ -172,6 +173,24 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
       testsTotal += tests.y;
 
       data.testsDaily.push(testsItem);
+    });
+  };
+
+  /**
+   * Method preparing daily tests data.
+   * @param testsData Pre test data.
+   */
+  const getTestsDailyCorrected = (testsData: { values: [IXYAxes] }[]) => {
+    let testsTotal = 0;
+    testsData[1].values.map((tests: IXYAxes) => {
+      const testsItem = {} as ITestsDaily;
+      testsItem.date = parseDate(tests.x, 'dd.mm.yyyy');
+      testsItem.value = Number(tests.y);
+      testsItem.total = Number(tests.y + testsTotal);
+
+      testsTotal += tests.y;
+
+      data.testsDailyCorrected.push(testsItem);
     });
   };
 
@@ -308,6 +327,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   getGeneralData(rawData);
   getInfectedDaily(preData.infectedDailyPreData);
   getTestsDaily(preData.testsDailyPreData);
+  getTestsDailyCorrected(preData.testsDailyPreData);
   getPositivityRatio(preData.positivityRatioPreData);
   getHospitalizedDaily(
     preData.hospitalizedDailyPreData[0],

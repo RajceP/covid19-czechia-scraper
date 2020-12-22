@@ -1,17 +1,16 @@
 {
   "editor.codeActionsOnSave": [
     "source.addMissingImports",
+    "source.organizeImports",
     "source.fixAll.stylelint",
     "source.fixAll.eslint"
   ],
   "editor.formatOnSave": true,
-  "peacock.color": "#215732",
-  "peacock.remoteColor": "#007acc",
-  "tsImportSorter.configuration.autoFormat": "onSave",
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#007acc",
     "titleBar.activeForeground": "#e7e7e7",
     "titleBar.inactiveBackground": "#007acc99",
     "titleBar.inactiveForeground": "#e7e7e799"
-  }
+  },
+  "peacock.remoteColor": "#007acc"
 }

@@ -3,7 +3,7 @@ export interface IData {
   testsYesterday: number;
   infectedTotal: number;
   infectedYesterday: number;
-  infectedToday: number;
+  // infectedToday: number;
   active: number;
   healed: number;
   deceased: number;
@@ -11,6 +11,7 @@ export interface IData {
   critical: number;
   infectedDaily: IInfectedDaily[];
   testsDaily: ITestsDaily[];
+  testsDailyCorrected: ITestsDaily[];
   positivityRatio: IPositivityRatio[];
   hospitalizedDaily: IHospitalizedDaily[];
   activeDaily: IActiveDaily[];
@@ -47,7 +48,7 @@ export interface IRawData {
 
 export interface IPreData {
   infectedDailyPreData: { values: [IXYAxes] };
-  testsDailyPreData: { values: [IXYAxes] };
+  testsDailyPreData: { values: [IXYAxes] }[];
   positivityRatioPreData: { values: [IXYAxes] }[];
   hospitalizedDailyPreData: { values: [IXYAxes] }[];
   activeDailyPreData: { values: [[string, number]] }[];
