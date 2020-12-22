@@ -185,8 +185,8 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
     testsData[1].values.map((tests: IXYAxes) => {
       const testsItem = {} as ITestsDaily;
       testsItem.date = parseDate(tests.x, 'dd.mm.yyyy');
-      testsItem.value = Number(tests.y);
-      testsItem.total = Number(tests.y + testsTotal);
+      testsItem.value = tests.y;
+      testsItem.total = tests.y + testsTotal;
 
       testsTotal += tests.y;
 
