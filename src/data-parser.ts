@@ -177,7 +177,7 @@ export const dataParser = ($: cheerio.Root, url: string): IData => {
   };
 
   /**
-   * Method preparing daily tests data.
+   * Method preparing daily tests data after correction.
    * @param testsData Pre test data.
    */
   const getTestsDailyCorrected = (testsData: { values: [IXYAxes] }[]) => {
